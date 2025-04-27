@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
+}
+
+model Tinta {
+  id          Int     @id @default(autoincrement())
+  nome        String
+  cor         String
+  tipo_parede String
+  ambiente    String
+  acabamento  String
+  features    Json
+  linha       String
+}
+
+
