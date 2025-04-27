@@ -1,0 +1,16 @@
+services:
+  db:
+    image: ankane/pgvector:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: loomi
+      POSTGRES_PASSWORD: S3nhL00m1!
+      POSTGRES_DB: tintas
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data: {}
