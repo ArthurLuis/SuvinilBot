@@ -18,6 +18,14 @@ model Tinta {
   acabamento  String
   features    Json
   linha       String
+  embeddings  Embedding?
 }
 
-
+model Embedding {
+  id        Int      @id @default(autoincrement())
+  tintaId   Int      @unique
+  vector    Unsupported("vector(1536)")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tinta Tinta @relation(fields: [tintaId], references: [id])
+}
