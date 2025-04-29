@@ -26,4 +26,18 @@ export class OpenaiService {
     });
     return chatCompletion.choices[0].message.content;
   }
+
+  async createEmbedding({
+    model,
+    input,
+  }: {
+    model: string;
+    input: string;
+  }): Promise<OpenAI.Embeddings.CreateEmbeddingResponse> {
+    const embedding = await this.openai.embeddings.create({
+      model,
+      input,
+    });
+    return embedding;
+  }
 }

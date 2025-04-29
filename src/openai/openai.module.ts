@@ -18,6 +18,6 @@ import OpenAI from 'openai';
       inject: [ConfigService],
     },
   ],
-  exports: [OpenaiService],
+  exports: [OpenaiService, OpenAI],
 })
 export class OpenaiModule {}
