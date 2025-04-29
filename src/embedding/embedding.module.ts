@@ -10,6 +10,6 @@ import { ConfigModule } from '@nestjs/config';
   imports: [OpenaiModule, ConfigModule],
   providers: [PrismaService, OpenaiService, EmbeddingService],
   controllers: [EmbeddingController],
-  exports: [],
+  exports: [EmbeddingService],
 })
 export class EmbeddingModule {}

@@ -9,7 +9,14 @@ import { EmbeddingModule } from './embedding/embedding.module';
 import { ChatModule } from './chat/chat.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), DatabaseModule, TintasModule, OpenaiModule, EmbeddingModule, ChatModule],
+  imports: [
+    ConfigModule.forRoot(),
+    DatabaseModule,
+    TintasModule,
+    OpenaiModule,
+    EmbeddingModule,
+    ChatModule,
+  ],
   providers: [EmbeddingService],
   controllers: [EmbeddingController],
 })
