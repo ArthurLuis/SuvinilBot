@@ -5,8 +5,8 @@ import { OpenaiService } from 'src/openai/openai.service';
 @Injectable()
 export class EmbeddingService {
   constructor(
-    private prisma: PrismaService,
-    private openai: OpenaiService,
+    private readonly prisma: PrismaService,
+    private readonly openai: OpenaiService,
   ) {}
 
   async generateEmbedding(texto: string): Promise<number[]> {
@@ -24,7 +24,9 @@ export class EmbeddingService {
       throw new Error('Invalid response from OpenAI service');
     }
 
-    return response.data[0].embedding;
+    const embedding = response.data[0].embedding;
+
+    return embedding;
   }
 
   async saveEmbedding(tintaId: number, embeddingArray: number[]) {
@@ -64,5 +66,21 @@ export class EmbeddingService {
     for (const { id } of tintas) {
       await this.generatePaintEmbedding(id);
     }
+  }
+
+  async searchSimilarPaints(query: string, k = 5): Promise<any[]> {
+    const queryEmbedding = await this.generateEmbedding(query);
+    const vectorString = JSON.stringify(queryEmbedding);
+
+    const results = await this.prisma.$queryRaw<any[]>`
+    SELECT t.*, e.id as embedding_id, 
+    (e.vector <-> ${vectorString}::vector) as distance
+    FROM "Tinta" t
+    JOIN "Embedding" e ON t.id = e."tintaId"
+    ORDER BY distance ASC
+    LIMIT ${k};
+  `;
+
+    return results;
   }
 }

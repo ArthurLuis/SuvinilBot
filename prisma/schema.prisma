@@ -26,6 +26,6 @@ model Embedding {
   tintaId   Int      @unique
   vector    Unsupported("vector(1536)")
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
   tinta Tinta @relation(fields: [tintaId], references: [id])
 }
