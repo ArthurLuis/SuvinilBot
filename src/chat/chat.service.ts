@@ -1,45 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { EmbeddingService } from 'src/embedding/embedding.service';
-import { ChatOpenAI } from '@langchain/openai';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { OpenaiService } from 'src/openai/openai.service';
+import { responsePrompt } from 'src/prompts';
+import { OrchestratorService } from 'src/orchestrator/orchestrator.service';
 
 @Injectable()
 export class ChatService {
-  constructor(private readonly embeddingService: EmbeddingService) {}
+  constructor(
+    private readonly orchestrator: OrchestratorService,
+    private readonly openaiService: OpenaiService, 
+  ) {}
 
   async generateAnswer(userQuestion: string): Promise<string> {
-    const tintas = await this.embeddingService.searchSimilarPaints(
-      userQuestion,
-      5,
-    );
-    const context = tintas
-      .map((t) => `Nome: ${t.nome}\nCor: ${t.cor}\nAcabamento: ${t.acabamento}`)
-      .join('\n---\n');
+    const context = await this.orchestrator.composeContext(userQuestion);
 
-    const prompt = ChatPromptTemplate.fromTemplate(`
-Você é um especialista em tintas Suvinil.  
-Tome por base as opções abaixo e responda à pergunta do usuário de forma objetiva e completa.
-
-TINTAS DISPONÍVEIS:
-{context}
-
-PERGUNTA:
-{question}
-
-RESPOSTA:
-`);
-
-    const llm = new ChatOpenAI({
-      modelName: 'gpt-3.5-turbo',
-      temperature: 0.7,
-    });
-    const chain = prompt.pipe(llm);
-
-    const { text } = await chain.invoke({
+    const filledPrompt = await responsePrompt.format({
       context,
       question: userQuestion,
     });
 
-    return text;
+    const response = await this.openaiService.getResponse(filledPrompt);
+    if (!response) {
+      throw new Error('ChatService: resposta do OpenAI veio vazia');
+    }
+
+    return response;
   }
 }
