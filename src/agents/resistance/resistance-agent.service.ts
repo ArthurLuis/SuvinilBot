@@ -6,13 +6,12 @@ import { resistancePrompt } from 'src/prompts';
 export class ResistanceAgentService {
   constructor(private readonly openaiService: OpenaiService) {}
 
-  async run(input: string): Promise<string> {
-    const filledPrompt = await resistancePrompt.format({ input });
+  async run(input: string, summary: string): Promise<string> {
+    const filledPrompt = await resistancePrompt.format({ input, summary });
     const response = await this.openaiService.getResponse(filledPrompt);
-    if (response == null) {
-      throw new Error('ResistanceAgent: resposta do OpenAI veio vazia');
+    if (!response) {
+      throw new Error('ResistanceAgent: resposta vazia');
     }
-
     return response;
   }
 }
