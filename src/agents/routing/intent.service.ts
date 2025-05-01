@@ -15,10 +15,10 @@ export class IntentService {
 
     const prompt = intentPromptTemplate.replace('{question}', userMessage);
     const raw = await this.openai.getResponse(prompt);
-    this.logger.verbose('Intent raw: ' + raw);
+    this.logger.verbose('Intent raw: ' + JSON.stringify(raw.reply));
 
     try {
-      const agents = JSON.parse(raw!) as AgentKey[];
+      const agents = JSON.parse(raw.reply) as AgentKey[];
       this.logger.log('Agentes selecionados: ' + agents.join(', '));
       return agents;
     } catch {

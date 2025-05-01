@@ -15,6 +15,6 @@ export class EnvironmentAgentService {
       throw new Error('EnvironmentAgent: resposta do OpenAI veio vazia');
     }
 
-    return response;
+    return response.reply;
   }
 }

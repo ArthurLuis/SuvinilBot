@@ -12,6 +12,6 @@ export class UsageAgentService {
     if (!response) {
       throw new Error('UsageAgent: resposta vazia');
     }
-    return response;
+    return response.reply;
   }
 }
