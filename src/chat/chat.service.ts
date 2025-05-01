@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { OrchestratorService } from 'src/orchestrator/orchestrator.service';
 import { OpenaiService } from 'src/openai/openai.service';
 import { responsePrompt } from 'src/prompts/response.prompt';
-import { OrchestratorService } from 'src/orchestrator/orchestrator.service';
 
 @Injectable()
 export class ChatService {
@@ -10,16 +10,25 @@ export class ChatService {
     private readonly openai: OpenaiService,
   ) {}
 
-  async generateAnswer(userQuestion: string): Promise<string> {
+  async generateAnswer(
+    userQuestion: string,
+    sessionId?: string,
+  ): Promise<{ reply: string; sessionId: string }> {
     const context = await this.orchestrator.composeContext(userQuestion);
+
     const filled = await responsePrompt.format({
       context,
       question: userQuestion,
     });
-    const answer = await this.openai.getResponse(filled);
-    if (!answer) {
+
+    const { reply, sessionId: newSid } = await this.openai.getResponse(
+      filled,
+      sessionId,
+    );
+
+    if (!reply) {
       throw new Error('Resposta vazia do OpenAI');
     }
-    return answer;
+    return { reply, sessionId: newSid };
   }
 }
