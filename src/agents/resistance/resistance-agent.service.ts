@@ -12,6 +12,6 @@ export class ResistanceAgentService {
     if (!response) {
       throw new Error('ResistanceAgent: resposta vazia');
     }
-    return response;
+    return response.reply;
   }
 }
