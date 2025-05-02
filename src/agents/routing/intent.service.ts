@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OpenaiService } from 'src/openai/openai.service';
 import { intentPromptTemplate } from 'src/prompts/intent.prompt';
 
-export type AgentKey = 'environment' | 'resistance' | 'usage';
+export type AgentKey = 'environment' | 'resistance' | 'visualization' | 'usage';
 
 @Injectable()
 export class IntentService {

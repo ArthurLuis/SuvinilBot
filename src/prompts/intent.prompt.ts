@@ -17,6 +17,16 @@ Decida quais agentes acionar, escolhendo entre:
    - Proteção especial: anti-mofo, anti-ferrugem, UV+
    - Durabilidade em condições severas: tráfego intenso, maresia
 
+3. **visualization** (APENAS quando o usuário pede uma simulação visual):
+   - Sinais típicos: 
+     * “como ficaria”  
+     * “me mostre como ficaria”  
+     * “mostrar como fica”  
+     * “quero ver como”  
+     * “imagem” ou “foto” no contexto de aplicação da tinta
+   - Deseja ver a aplicação da tinta no ambiente em formato de imagem  
+   - Gera prompt para DALL·E que descreva cor, acabamento e ambiente
+
 ### Regras Críticas
 ▸ **NUNCA** ative environment para:
 - Ambientes genéricos: "sala", "quarto", "corredor" (a menos que mencionem características específicas)
@@ -35,13 +45,19 @@ Decida quais agentes acionar, escolhendo entre:
 6. "Quero pintar o deck de madeira na área da piscina" → ["environment","resistance"]
 7. "Preciso de tinta anti-mofo para lavanderia interna" → ["resistance"]
 8. "Tinta para parede interna lavável" → []
+9. "Como ficaria minha varanda de azul claro?" → ["environment","visualization"]
+10. "Me mostre como ficaria a parede do meu quarto" → ['visualization']
 
 ### Formato de Resposta
 Responda APENAS com um array JSON válido:
-- []: maioria dos casos internos genéricos
-- ["environment"]: ambientes com características específicas
-- ["resistance"]: exigências funcionais extremas
-- ["environment","resistance"]: combinação de ambos
+- []: maioria dos casos internos genéricos  
+- ["environment"]: ambientes com características específicas  
+- ["resistance"]: exigências funcionais extremas  
+- ["visualization"]: apenas simulação visual  
+- ["environment","resistance"]: combinação de ambos  
+- ["environment","visualization"]: simulação de ambiente externo  
+- ["resistance","visualization"]: simulação com foco em resistência  
+- ["environment","resistance","visualization"]: todos os agentes acionados  
 
 Pergunta: "{question}"
 Agentes:

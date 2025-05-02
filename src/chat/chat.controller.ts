@@ -9,6 +9,7 @@ interface ChatRequest {
 interface ChatResponse {
   sessionId: string;
   reply: string;
+  imageUrls?: string[];
 }
 
 @Controller('chat')
@@ -18,10 +19,11 @@ export class ChatController {
   @Post()
   async chat(@Body() body: ChatRequest): Promise<ChatResponse> {
     const { sessionId, question } = body;
-    const { reply, sessionId: sid } = await this.chatService.generateAnswer(
-      question,
-      sessionId,
-    );
-    return { sessionId: sid, reply };
+    const {
+      reply,
+      sessionId: sid,
+      imageUrls,
+    } = await this.chatService.generateAnswer(question, sessionId);
+    return { sessionId: sid, reply, imageUrls };
   }
 }
