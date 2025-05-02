@@ -72,4 +72,13 @@ export class OpenaiService {
     });
     return resp.choices[0].message.content!;
   }
+
+  async generateImage(prompt: string, n = 1): Promise<string[]> {
+    const resp = await this.openai.images.generate({
+      prompt,
+      n,
+      size: '1024x1024',
+    });
+    return (resp.data ?? []).map((d) => d.url).filter((url): url is string => url !== undefined);
+  }
 }
