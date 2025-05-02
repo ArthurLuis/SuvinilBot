@@ -13,8 +13,9 @@ export class ChatService {
   async generateAnswer(
     userQuestion: string,
     sessionId?: string,
-  ): Promise<{ reply: string; sessionId: string }> {
-    const context = await this.orchestrator.composeContext(userQuestion);
+  ): Promise<{ reply: string; sessionId: string; imageUrls?: string[] }> {
+    const { context, imageUrls } =
+      await this.orchestrator.composeContext(userQuestion);
 
     const filled = await responsePrompt.format({
       context,
@@ -29,6 +30,7 @@ export class ChatService {
     if (!reply) {
       throw new Error('Resposta vazia do OpenAI');
     }
-    return { reply, sessionId: newSid };
+
+    return { reply, sessionId: newSid, imageUrls };
   }
 }
