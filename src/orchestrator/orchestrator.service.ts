@@ -1,9 +1,12 @@
+// src/orchestrator/orchestrator.service.ts
+
 import { Injectable, Logger } from '@nestjs/common';
 import { EnvironmentAgentService } from 'src/agents/environment/environment-agent.service';
 import { ResistanceAgentService } from 'src/agents/resistance/resistance-agent.service';
 import { UsageAgentService } from 'src/agents/usage/usage-agent.service';
 import { AgentKey, IntentService } from 'src/agents/routing/intent.service';
-import { EmbeddingService } from 'src/embedding/embedding.service'; // ←
+import { EmbeddingService } from 'src/embedding/embedding.service';
+import { VisualizationService } from 'src/agents/visualization/visualization.service';
 
 @Injectable()
 export class OrchestratorService {
@@ -11,18 +14,23 @@ export class OrchestratorService {
 
   constructor(
     private readonly intent: IntentService,
-    private readonly embeddingService: EmbeddingService, // ←
+    private readonly embeddingService: EmbeddingService,
     private readonly envAgent: EnvironmentAgentService,
     private readonly resAgent: ResistanceAgentService,
     private readonly usageAgent: UsageAgentService,
+    private readonly vizAgent: VisualizationService,
   ) {}
 
-  async composeContext(userMessage: string): Promise<string> {
+  async composeContext(userMessage: string): Promise<{
+    context: string;
+    imageUrls?: string[];
+  }> {
     this.logger.debug(`Orquestração iniciada: "${userMessage}"`);
 
     const agents: AgentKey[] = await this.intent.decideAgents(userMessage);
-
-    if (!agents.includes('usage')) agents.push('usage');
+    if (!agents.includes('usage')) {
+      agents.push('usage');
+    }
 
     this.logger.debug('Buscando tintas para summary...');
     const tintas = await this.embeddingService.searchSimilarPaints(
@@ -44,25 +52,41 @@ export class OrchestratorService {
     const parts: string[] = [];
 
     if (agents.includes('environment')) {
-      parts.push(
-        '**Environment Analysis:**\n' + (await this.envAgent.run(userMessage)),
-      );
+      const envResult = await this.envAgent.run(userMessage);
+      parts.push('**Environment Analysis:**\n' + envResult);
     }
+
     if (agents.includes('resistance')) {
-      parts.push(
-        '**Resistance Analysis:**\n' +
-          (await this.resAgent.run(userMessage, summary)), 
-      );
+      const resResult = await this.resAgent.run(userMessage, summary);
+      parts.push('**Resistance Analysis:**\n' + resResult);
     }
-    // Usage sempre
-    parts.push(
-      '**Usage Analysis:**\n' +
-        (await this.usageAgent.run(userMessage, summary)), 
-    );
+
+    const usageResult = await this.usageAgent.run(userMessage, summary);
+    parts.push('**Usage Analysis:**\n' + usageResult);
 
     const context = parts.join('\n\n');
     this.logger.verbose('Contexto composto:\n' + context);
 
-    return context;
+    let imageUrls: string[] | undefined;
+    if (agents.includes('visualization')) {
+      const recommendedPaint =
+        summary
+          .split('\n')[0]
+          .match(/-\s*([^()]+)/)?.[1]
+          .trim() ?? '';
+      this.logger.debug(`VisualizationAgent: tinta="${recommendedPaint}"`);
+      const recommendedColor =
+        summary
+          .split('\n')[0]
+          .match(/\(\s*([^,]+),/)?.[1]
+          .trim() ?? '';
+      imageUrls = await this.vizAgent.run(
+        recommendedPaint,
+        recommendedColor,
+        userMessage,
+      );
+    }
+
+    return { context, imageUrls };
   }
 }
