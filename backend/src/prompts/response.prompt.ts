@@ -22,7 +22,7 @@ Instruções:
    - As melhores opções para cada parte das características (ex: cor branca mas acabamento acetinado ou cor cinza fosca)
    - A opção mais próxima em cor ou função (ex: cor cinza fosca)
 - NUNCA misture especificações de diferentes tintas. Use apenas as informações da tinta que está no banco de dados, sem criar novas combinações.
-- Caso a pergunta do usuário não seja pedindo uma sugestão de tinta especifica e tenha mais opções de tinta, adicione no final da respota "Deseja 
-mais opções?"
+- Somente se nas "Outras opções disponiveis" houverem opções que se adequam a pergunta do úsuario, pergunte ao usuario no final se ele deseja ver essas opções também, caso as opções não sejam adequadas não inclua essa pergunta."
+- Caso o usuário tenha pedido para ver mais opções, mostre as opções que mais se adequam a pergunta do usuário, sem mencionar outras opções que não se adequam.
 Resposta:
 `);
