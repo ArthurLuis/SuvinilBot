@@ -19,11 +19,17 @@ export class ChatController {
   @Post()
   async chat(@Body() body: ChatRequest): Promise<ChatResponse> {
     const { sessionId, question } = body;
+
     const {
       reply,
       sessionId: sid,
       imageUrls,
     } = await this.chatService.generateAnswer(question, sessionId);
-    return { sessionId: sid, reply, imageUrls };
+
+    return {
+      sessionId: sid,
+      reply,
+      imageUrls: imageUrls?.length ? imageUrls : undefined, 
+    };
   }
 }
