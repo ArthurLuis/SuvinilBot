@@ -1,6 +1,4 @@
-'use client';
-import React from 'react';
-import {motion} from 'framer-motion';
+'use client';import React from 'react';import {motion} from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import ImageModal from '../ImageModal/ImageModal'; // importe o modal
 
@@ -17,7 +15,7 @@ export const Balloon: React.FC<BalloonProps> = ({
 }) => {
   const baseClasses = 'rounded-lg p-4 max-w-[80%] break-words';
   const userClasses = 'bg-gray-100 text-black self-end';
-  const systemClasses = 'bg-[#DE5F02] text-black self-start';
+  const systemClasses = 'bg-[#F3A463] text-black self-start';
 
   const uniqueUrls = imageUrls ? Array.from(new Set(imageUrls)) : [];
 

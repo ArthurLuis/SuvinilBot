@@ -1,4 +1,7 @@
-import React, {useState} from 'react';interface ChatInputProps {  onSend: (msg: string) => void;}
+import React, {useState} from 'react';
+interface ChatInputProps {
+  onSend: (msg: string) => void;
+}
 
 export const ChatInput: React.FC<ChatInputProps> = ({onSend}) => {
   const [text, setText] = useState('');
@@ -9,6 +12,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({onSend}) => {
     setText('');
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <div className='flex gap-2 p-4'>
       <input
@@ -17,6 +27,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({onSend}) => {
         placeholder='Digite sua mensagem...'
         value={text}
         onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
       />
       <button
         onClick={handleSend}

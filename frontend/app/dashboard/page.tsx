@@ -1,7 +1,8 @@
-'use client';import React, {useState, useEffect} from 'react';
+'use client';
+import React, {useState, useEffect} from 'react';
 import AppScreen from '../components/AppScreen/AppScreen';
 import axios from 'axios';
-
+import {RiDatabase2Fill} from 'react-icons/ri'; 
 import {Chat} from '../components/Chat/Chat';
 import {ChatInput} from '../components/ChatInput/ChatInput';
 import Loading from '../components/Loading/Loading';
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingEmbeddings, setLoadingEmbeddings] = useState(false);
 
   useEffect(() => {
     localStorage.removeItem('sessionId');
@@ -78,6 +80,30 @@ export default function Dashboard() {
           <ChatInput onSend={sendMessage} />
         </div>
       </div>
+      <button
+        onClick={async () => {
+          if (loadingEmbeddings) return;
+
+          setLoadingEmbeddings(true);
+          try {
+            await axios.post('http://localhost:3001/embeddings/generate-all');
+            alert('Embeddings gerados com sucesso!');
+          } catch (err) {
+            console.error('Erro ao gerar embeddings:', err);
+            alert('Erro ao gerar embeddings.');
+          } finally {
+            setLoadingEmbeddings(false);
+          }
+        }}
+        title='Gerar os vetores embeddings de todas as tintas no banco de dados'
+        className='fixed right-4 bottom-4 mt-20 z-50 bg-[#DE5F02] text-white p-4 rounded-full shadow-lg hover:bg-orange-700 transition-all duration-300'
+      >
+        {loadingEmbeddings ? (
+          <Loading isLoading size={24} />
+        ) : (
+          <RiDatabase2Fill size={24} />
+        )}
+      </button>
     </AppScreen>
   );
 }
