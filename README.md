@@ -3,9 +3,18 @@
 # Catálogo Inteligente de Tintas Suvinil 🚀
 
 Bem-vindo ao **Catálogo Inteligente de Tintas Suvinil**, uma API REST capaz de:
-- Recomendar tintas ideais ao usuário via chat interativo
-- Enriquecer respostas com RAG (Retrieval-Augmented Generation)
-- Gerar simulações visuais de aplicação de tinta via OpenAI Image API
+-  **Interpretar a intenção do usuário** e acionar somente os agentes relevantes via um orquestrador inteligente com LangChain  
+-  **Buscar informações contextuais com RAG (Retrieval-Augmented Generation)**, utilizando embeddings armazenados no banco com suporte a vetores via pgvector  
+-  **Orquestrar múltiplos agentes especializados**, incluindo:
+    - Agente de Intenção  
+    - Agente de Ambientes (interno/externo)  
+    - Agente de Resistência  
+    - Agente de Uso (escolha ideal com base vetorial)  
+    - Agente de Visualização (geração de imagem com DALL·E)
+-  **Gerar simulações visuais realistas** da aplicação da tinta com a OpenAI Image API (DALL·E), com prompts otimizados via técnicas de engenharia de prompt  
+- **Manter o contexto da conversa** através de sessões contínuas, permitindo múltiplas mensagens com consistência  
+-  **Testar e documentar toda a API** via Swagger  
+-  **Interface visual completa** integrada ao backend com React, seguindo a identidade da Suvinil  
 
 ---
 
@@ -24,12 +33,13 @@ Bem-vindo ao **Catálogo Inteligente de Tintas Suvinil**, uma API REST capaz de:
 11. [Testagem](#-testagem)  
 12. [Dicas de Uso](#-dicas-de-uso)  
 13. [Estrutura de Pastas](#-estrutura-de-pastas)  
-14. [Próximos Passos](#-próximos-passos)  
-15. [Autor](#-autor)  
+14. [Organização do Projeto](#-organização-do-projeto) 
+15. [Próximos Passos](#-próximos-passos)  
+16. [Autor](#-autor)  
 
 ---
 
-## 🛠️ Tecnologias
+## Tecnologias 🛠️ 
 
 - **Backend**: NestJS (modular, DI, Clean Architecture)  
 - **Linguagem**: TypeScript  
@@ -38,7 +48,7 @@ Bem-vindo ao **Catálogo Inteligente de Tintas Suvinil**, uma API REST capaz de:
 - **Infraestrutura**: Docker Compose  
 - **IA / LLM**: OpenAI GPT-4 Turbo & GPT-3.5-Turbo  
 - **Embeddings**: text-embedding-3-small (1536 dims)  
-- **Vector Search**: SQL RAW com `<->` e índice ivfflat  
+- **Vector Search**: SQL RAW com <-> e índice ivfflat  
 - **LangChain**: orchestration de prompts via LCEL  
 
 <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
@@ -48,7 +58,7 @@ Bem-vindo ao **Catálogo Inteligente de Tintas Suvinil**, uma API REST capaz de:
   <img src="https://cdn.worldvectorlogo.com/logos/prisma-2.svg" alt="Prisma Logo" width="90"/>
   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJl4fp0SkQbTPU5ZxVl6AKWYuKCwM0gIhNtQ&s" alt="Docker Compose Logo" width="60"/>
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/2048px-ChatGPT_logo.svg.png" alt="GPT-4 Turbo Logo" width="60"/>
-  <img src="https://images.seeklogo.com/logo-png/61/2/langchain-logo-png_seeklogo-611654.png" alt="LangChain Logo" width="60"/>
+  <img src="https://brandlogos.net/wp-content/uploads/2025/03/langchain-logo_brandlogos.net_9zgaw.png" alt="LangChain Logo" width="80"/>
 </div>
 
 ---
@@ -64,34 +74,34 @@ Bem-vindo ao **Catálogo Inteligente de Tintas Suvinil**, uma API REST capaz de:
    - **UsageAgent**: busca vetorial e sumarização  
    - **VisualizationAgent**: gera prompt + imagens via DALL·E  
 4. **OrchestratorModule** – Orquestra agentes e compõe contexto  
-5. **ChatModule** – Endpoint `/chat` com histórico e sessionId  
+5. **ChatModule** – Endpoint /chat com histórico e sessionId  
 6. **OpenaiModule** – Acesso genérico à API OpenAI  
 
-Fluxo de `/chat`:  
-- Cliente envia `{ question, sessionId? }`  
+Fluxo de /chat:  
+- Cliente envia { question, sessionId? }  
 - IntentAgent decide agentes  
 - Orchestrator chama Usage + Environment/Resistance  
 - VisualizationAgent gera imagem se solicitado  
-- ChatService retorna `{ reply, sessionId, imageUrls? }`
+- ChatService retorna { reply, sessionId, imageUrls? }
 
 ---
 
 ## 📦 Módulos Principais
 
 - **/tintas**  
-  - `POST /tintas` – Cria nova tinta  
-  - `GET /tintas` – Lista tintas  
-  - `GET /tintas/:id` – Detalha tinta  
-  - `PATCH /tintas/:id` – Atualiza tinta  
-  - `DELETE /tintas/:id` – Remove tinta  
+  - POST /tintas – Cria nova tinta  
+  - GET /tintas – Lista tintas  
+  - GET /tintas/:id – Detalha tinta  
+  - PATCH /tintas/:id – Atualiza tinta  
+  - DELETE /tintas/:id – Remove tinta  
 - **/embeddings**  
-  - `POST /embeddings/generate-all`  
-  - `POST /embeddings/:id`  
-  - `GET  /embeddings/search?q=texto&k=5`  
+  - POST /embeddings/generate-all  
+  - POST /embeddings/:id  
+  - GET  /embeddings/search?q=texto&k=5  
 - **/chat**  
-  - `POST /chat` – Chat interativo com IA  
+  - POST /chat – Chat interativo com IA  
 - **/openai**  
-  - `POST /openai` – Endpoint genérico OpenAI  
+  - POST /openai – Endpoint genérico OpenAI  
 
 ---
 
@@ -106,65 +116,102 @@ Fluxo de `/chat`:
 ## ⚙️ Configuração do Projeto
 
 1. Clone o repositório:  
-    - git clone https://github.com/seu-usuario/catalogo-inteligente-suvinil.git  
-    - cd catalogo-inteligente-suvinil  
+ 
+git clone https://github.com/ArthurLuis/SuvinilBot.git  
+ cd SuvinilBot
+  
 2. Instale as dependências:  
-    - npm install  
-    - ou yarn install  
+ 
+npm install
+ 
 
 ---
 
 ## 🔑 Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz com:
+Crie um arquivo .env na raiz com:
 
-    DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/dbname
-    OPENAI_API_KEY=sk-YOUR_KEY
-    PORT=3001
-
----
-
-## 🐳 Orquestração com Docker Compose
-
-- Levanta containers de Postgres (+ pgvector) e API NestJS  
-- Arquivo: `docker-compose.yml`
-
-    version: '3.8'
-    services:
-      db:
-        image: postgres:15
-        environment:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: pass
-          POSTGRES_DB: catalogo
-        volumes:
-          - db-data:/var/lib/postgresql/data
-      api:
-        build: .
-        env_file: .env
-        ports:
-          - "${PORT}:3001"
-        depends_on:
-          - db
-    volumes:
-      db-data:
+```   
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/dbname
+OPENAI_API_KEY=sk-YOUR_KEY
+   
+``` 
+ENVIADO POR EMAIL
 
 ---
 
 ## ▶️ Executando a Aplicação
 
-- Com Docker Compose:  
-    docker-compose up --build  
-- Localmente (sem Docker):  
-    npm run start:dev  
+### 🐘 Subindo o banco de dados com Docker
 
-A API estará disponível em `http://localhost:3001`.
+1. Acesse a pasta backend:
+ 
+cd backend
+ 
+2. Suba o banco com suporte a pgvector via Docker:
+ 
+docker-compose up --build
+ 
+
+💡 O banco vai rodar na porta 5432 com o nome tintas. A imagem já vem com o pgvector habilitado.
+
+---
+
+### 🌱 Populando o banco (opcional)
+
+Se precisar popular o banco com os dados iniciais e gerar os embeddings:
+
+1. Rode o seed manualmente (popula as tintas):
+ 
+docker exec suvinil_api npm run seed
+ 
+2. Gere os embeddings das tintas:
+- Via terminal:
+ 
+curl -X POST http://localhost:3001/embedding/generate-all
+ 
+- Ou via botão no frontend (tem um botão que faz isso por você 👌)
+- É possivel também usar o Swagger em http://localhost:3001/api
+
+---
+
+### 🧠 Rodando a API (NestJS)
+
+Dentro da pasta backend, inicie a API em modo dev:
+ 
+npm install
+npm run start:dev
+ 
+A API vai rodar em http://localhost:3001
+
+---
+
+### 🎨 Rodando o Frontend (Next.js)
+
+1. Acesse a pasta frontend:
+ 
+cd ../frontend
+ 
+2. Instale as dependências e rode:
+ 
+npm install
+npm run dev
+ 
+O frontend estará disponível em http://localhost:3000
+
+---
+
+### ✅ Verificando se está tudo funcionando
+
+- Acesse http://localhost:3000 para ver a interface do chatbot.
+- Faça uma pergunta como: “Quero pintar minha sala com uma cor aconchegante”.
+- Se aparecer uma sugestão de tinta (ou até uma imagem gerada com a cor), tá rodando!
 
 ---
 
 ## 📖 Documentação Swagger / OpenAPI
 
-- Acesse: `http://localhost:3001/api`  
+- Acesse: http://localhost:3001/api  
 - Explore todos os endpoints, modelos de request/response e exemplos interativos.
 
 ---
@@ -172,33 +219,35 @@ A API estará disponível em `http://localhost:3001`.
 ## ⚡ Endpoints de Demonstração
 
 1. **Teste Chat**  
-    Envie `{ "question": "Qual tinta para área externa?" }` em `POST /chat`.  
+    Envie { "question": "Qual tinta para área externa?" } em POST /chat.  
 2. **Geração de Embeddings**  
-    - `POST /embeddings/generate-all`  
-    - `POST /embeddings/1`  
+    - POST /embeddings/generate-all  
+    - POST /embeddings/1  
 3. **Busca Vetorial**  
-    - `GET /embeddings/search?q=externo&k=3`  
+    - GET /embeddings/search?q=externo&k=3  
 4. **CRUD de Tintas**  
-    - `POST /tintas` com JSON de `CreateTintaDto`  
-    - `GET /tintas`  
+    - POST /tintas com JSON de CreateTintaDto  
+    - GET /tintas  
     - ...  
 
 ---
-
 ## 🧪 Testagem
 
 1. **Quarto fácil de limpar e sem cheiro forte**  
+``` 
    Requisição:  
    POST /chat  
-   Content-Type: application/json  
-
+   Content-Type: application/json   
    {  
      "question": "Quero pintar meu quarto, mas prefiro algo que seja fácil de limpar e sem cheiro forte. Tem alguma sugestão?"  
    }  
-  
-![Uploading Captura de tela 2025-05-03 032336.png…]()
+``` 
+![Captura de tela 2025-05-03 032336](https://github.com/user-attachments/assets/7a1af7c8-6b58-4ab4-b704-ee5178cd8170)
+
+
 
 2. **Fachada exposta ao sol e chuva**  
+``` 
    Requisição:  
    POST /chat  
    Content-Type: application/json  
@@ -206,10 +255,11 @@ A API estará disponível em `http://localhost:3001`.
    {  
      "question": "Preciso pintar a fachada da minha casa. Bate muito sol e chove bastante por aqui. Qual tinta você recomenda?"  
    }  
- 
+ ``` 
 ![Captura de tela 2025-05-03 032531](https://github.com/user-attachments/assets/feb5dcc7-fea7-40b7-a405-c73d6e1f608e)
 
 3. **Tinta para madeira resistente ao calor**  
+``` 
    Requisição:  
    POST /chat  
    Content-Type: application/json  
@@ -217,10 +267,12 @@ A API estará disponível em `http://localhost:3001`.
    {  
      "question": "Você tem alguma tinta para madeira que seja resistente ao calor?"  
    }  
+``` 
   ![Captura de tela 2025-05-03 032707](https://github.com/user-attachments/assets/3b35f21e-ae1e-4476-aaec-b4fd6d072283)
 
 
 4. **Simulação de cinza moderno no escritório**  
+``` 
    Requisição:  
    POST /chat  
    Content-Type: application/json  
@@ -228,7 +280,9 @@ A API estará disponível em `http://localhost:3001`.
    {  
      "question": "Quero pintar meu escritório com um tom de cinza moderno. Mostra como ficaria?"  
    }  
-   _🖼️ Print da resposta e da imagem de mockup._
+``` 
+   ![Captura de tela 2025-05-03 044159](https://github.com/user-attachments/assets/17272a95-6427-48b9-a61e-1800480e63d6)
+
 
 ## 💡 Dicas de Uso
 
@@ -252,6 +306,7 @@ A API estará disponível em `http://localhost:3001`.
   `[Nest] 22212 - DEBUG [IntentService] Classificando intenção: "[…]"`  
   `[Nest] 22212 - LOG [IntentService] Agentes selecionados: environment, resistance`  
   `[Nest] 22212 - DEBUG [OrchestratorService] Buscando tintas similares…]`  
+---
 
 ## 🗂️ Estrutura de Pastas
 
@@ -267,6 +322,19 @@ A API estará disponível em `http://localhost:3001`.
     ├─ orchestrator/
     └─ prisma/
       └─ schema.prisma
+---
+## 🗂 Organização do Projeto
+
+Para manter uma organização clara e facilitar o acompanhamento do desenvolvimento, utilizei o **Notion** como ferramenta de planejamento e documentação do projeto. Nele, você encontrará:
+
+- Estrutura do projeto  
+- Planejamento de funcionalidades  
+- Relatorios diarios com daily escrita, decisões tecnicas, prints e dificuldades para cada dia de projeto
+- Lista de tarefas divididas por dia
+
+Acesse a página do projeto no Notion pelo link abaixo:
+
+🔗 [Loomi — Desafio Técnico SuvinilBot no Notion](https://general-cheddar-928.notion.site/Loomi-Desafio-T-cnico-SuvinilBot-1e0af57bd08b803ebf06c7abf5c7bb98?pvs=4)
 
 ---
 
@@ -283,3 +351,4 @@ A API estará disponível em `http://localhost:3001`.
 
 Codado com ❤️ por **Arthur Luis**  
 Desenvolvedor de software | entusiasta de IA e arquitetura limpa  
+
