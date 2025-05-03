@@ -21,10 +21,10 @@ Bem-vindo ao **Catálogo Inteligente de Tintas Suvinil**, uma API REST capaz de:
 8. [Executando a Aplicação](#-executando-a-aplicação)  
 9. [Documentação Swagger / OpenAPI](#-documentação-swagger--openapi)  
 10. [Endpoints de Demonstração](#-endpoints-de-demostração)  
-11. [Estrutura de Pastas](#-estrutura-de-pastas)  
-12. [Próximos Passos](#-próximos-passos)  
-13. [Contribuição](#-contribuição)  
-14. [Licença](#-licença)  
+11. [Testagem](#-testagem)  
+12. [Dicas de Uso](#-dicas-de-uso)  
+13. [Estrutura de Pastas](#-estrutura-de-pastas)  
+14. [Próximos Passos](#-próximos-passos)  
 15. [Autor](#-autor)  
 
 ---
@@ -184,6 +184,74 @@ A API estará disponível em `http://localhost:3001`.
     - ...  
 
 ---
+
+## 🧪 Testagem
+
+1. **Quarto fácil de limpar e sem cheiro forte**  
+   Requisição:  
+   POST /chat  
+   Content-Type: application/json  
+
+   {  
+     "question": "Quero pintar meu quarto, mas prefiro algo que seja fácil de limpar e sem cheiro forte. Tem alguma sugestão?"  
+   }  
+  
+![Uploading Captura de tela 2025-05-03 032336.png…]()
+
+2. **Fachada exposta ao sol e chuva**  
+   Requisição:  
+   POST /chat  
+   Content-Type: application/json  
+
+   {  
+     "question": "Preciso pintar a fachada da minha casa. Bate muito sol e chove bastante por aqui. Qual tinta você recomenda?"  
+   }  
+ 
+![Captura de tela 2025-05-03 032531](https://github.com/user-attachments/assets/feb5dcc7-fea7-40b7-a405-c73d6e1f608e)
+
+3. **Tinta para madeira resistente ao calor**  
+   Requisição:  
+   POST /chat  
+   Content-Type: application/json  
+
+   {  
+     "question": "Você tem alguma tinta para madeira que seja resistente ao calor?"  
+   }  
+  ![Captura de tela 2025-05-03 032707](https://github.com/user-attachments/assets/3b35f21e-ae1e-4476-aaec-b4fd6d072283)
+
+
+4. **Simulação de cinza moderno no escritório**  
+   Requisição:  
+   POST /chat  
+   Content-Type: application/json  
+
+   {  
+     "question": "Quero pintar meu escritório com um tom de cinza moderno. Mostra como ficaria?"  
+   }  
+   _🖼️ Print da resposta e da imagem de mockup._
+
+## 💡 Dicas de Uso
+
+- Gere os embeddings antes de testar  
+  Use o botão flutuante no canto inferior direito do frontend para rodar POST /embeddings/generate-all.
+
+- Fluxo de orquestração  
+  Quanto mais agentes forem acionados, maior o tempo de resposta. Comece com perguntas mais diretas e depois aumente a complexidade.
+
+- Sessão e contexto  
+  O frontend mantém o mesmo sessionId. Para reiniciar o chat sem contexto antigo, recarregue a página ou clique no ícone da Suvinil.
+
+- Consistência do DALL·E  
+  Os resultados podem variar conforme o tipo de tinta. Se a imagem sair estranha, tente reformular o prompt ou reenviar a requisição.
+
+- Swagger para testes diretos  
+  Você também pode testar todos os endpoints em http://localhost:3001/api sem precisar do frontend.
+
+- Monitore os logs do backend  
+  Observe os logs para ver como a orquestração dos agentes acontece em tempo real. Exemplo:  
+  `[Nest] 22212 - DEBUG [IntentService] Classificando intenção: "[…]"`  
+  `[Nest] 22212 - LOG [IntentService] Agentes selecionados: environment, resistance`  
+  `[Nest] 22212 - DEBUG [OrchestratorService] Buscando tintas similares…]`  
 
 ## 🗂️ Estrutura de Pastas
 
